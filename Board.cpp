@@ -3,8 +3,7 @@
 class Board {
 public:
 
-// Constructor
-Board();
+
 
 
 void reset();

@@ -3,9 +3,8 @@
 #include "Piece.hpp"
 
 const int TILE_SIZE = 60;
-const int BOARD_SIZE = 8;
 
-struct Piece {
+struct piece {
     bool isWhite;
     bool isQueen;
 };
@@ -13,7 +12,7 @@ struct Piece {
 class Checkers {
 public:
     Checkers() {
-        board.resize(BOARD_SIZE, std::vector<Piece*>(BOARD_SIZE, nullptr));
+        board.resize(BOARD_SIZE, std::vector<piece*>(BOARD_SIZE, nullptr));
         initBoard();
     }
 
@@ -77,20 +76,20 @@ public:
     }
 
 private:
-    std::vector<std::vector<Piece*>> board;
+    std::vector<std::vector<piece*>> board;
     std::optional<sf::Vector2i> selected;
 
     void initBoard() {
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < BOARD_SIZE; x++) {
                 if ((x + y) % 2 != 0)
-                    board[y][x] = new Piece{false, false};
+                    board[y][x] = new piece{false, false};
             }
         }
         for (int y = 5; y < 8; y++) {
             for (int x = 0; x < BOARD_SIZE; x++) {
                 if ((x + y) % 2 != 0)
-                    board[y][x] = new Piece{true, false};
+                    board[y][x] = new piece{true, false};
             }
         }
     }

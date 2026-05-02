@@ -10,6 +10,8 @@ struct Move {
   std::optional<std::pair<int, int>> capturedPiece;
 };
 
+const int BOARD_SIZE = 8; 
+
 class Board {
 public:
 
@@ -19,8 +21,9 @@ Board();
 void reset();
 
 private:
-// x - is upper left corner; y - down right corner.
-sf::Vector2i positionInWindow;
+
+// The grid of pieces filling with no pieces
+Piece grid[BOARD_SIZE][BOARD_SIZE] = {PieceColor::None};
 
 // Game board initialisation
 void initBoard();

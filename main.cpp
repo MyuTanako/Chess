@@ -23,7 +23,7 @@ int main()
 			{
 				if (keyPressed->button == sf::Mouse::Button::Left)
 				{
-                    game.handleClick(keyPressed->position.x, keyPressed->position.y);
+                    game.handleClick(keyPressed->position.x, keyPressed->position.y, window.getSize());
 				}
 			}
 

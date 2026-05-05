@@ -8,22 +8,21 @@ const int TILE_SIZE = 60;
 
 class Checkers {
 public:
-    Checkers() {
-        board.resize(BOARD_SIZE, std::vector<Piece*>(BOARD_SIZE, nullptr));
-        initBoard();
-    }
+    Checkers();
 
-        ~Checkers() {
-        for (auto& row : board)
-            for (auto& p : row)
-                delete p;
-    }
+    ~Checkers();
 
-    void handleClick(int mouseX, int mouseY);
-
-    void draw(sf::RenderWindow& window);
+    void handleClick(int, int, sf::Vector2u);
+    void draw(sf::RenderWindow&);
 
 private:
-    std::vector<std::vector<Piece*>> board;
+
+    void endTurn();
+
+    // std::vector<std::vector<Piece*>> board;
     std::optional<sf::Vector2i> selected;
+    Board board;
+    sf::RenderWindow window;
+    PieceColor currentTurn;
+    bool mustContinueJump;
 };

@@ -7,7 +7,7 @@
 struct Move {
   int fromX, fromY;
   int toX, toY;
-  std::optional<std::pair<int, int>> capturedPiece;
+  std::optional<sf::Vector2i> capturedPiece;
 };
 
 enum class SquereColor { None, White, Black };
@@ -23,7 +23,7 @@ Board();
 void reset();
 const Piece &getPieceAt(int x, int y) const;
 
-// Checks if a proposed move is valid under current board state and turn rules
+// Checks if a proposed move is valid
 bool isMoveValid(int fromX, int fromY, int toX, int toY, PieceColor currentTurn) const;
 
 // Updates the board state with the given move
@@ -31,6 +31,9 @@ void makeMove(const Move &move);
 
 // Determines if a player has any forced jumps available
 bool hasForcedJumps(PieceColor color) const;
+
+//Return Move object, all logic inside
+std::optional<Move> createMove(int fromX, int fromY, int toX, int toY, PieceColor currentTurn) const;
 
 
 private:

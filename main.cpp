@@ -4,15 +4,10 @@
 
 const int TILE_SIZE = 60;
 
-struct piece {
-    bool isWhite;
-    bool isQueen;
-};
-
 class Checkers {
 public:
     Checkers() {
-        board.resize(BOARD_SIZE, std::vector<piece*>(BOARD_SIZE, nullptr));
+        board.resize(BOARD_SIZE, std::vector<Piece*>(BOARD_SIZE, nullptr));
         initBoard();
     }
 
@@ -52,58 +47,21 @@ public:
     }
 
     void draw(sf::RenderWindow& window) {
-        for (int y = 0; y < BOARD_SIZE; y++) {
-            for (int x = 0; x < BOARD_SIZE; x++) {
-                sf::RectangleShape tile(sf::Vector2f(TILE_SIZE, TILE_SIZE));
-                tile.setPosition(sf::Vector2f(x * TILE_SIZE, y * TILE_SIZE));
-                tile.setFillColor((x + y) % 2 == 0 ? sf::Color(240, 217, 181) : sf::Color(181, 136, 99));
-
-                // Highlight selected
-                if (selected.has_value() && selected->x == x && selected->y == y) {
-                    tile.setFillColor(sf::Color::Green);
-                }
-
-                window.draw(tile);
-
-                if (board[y][x]) {
-                    sf::CircleShape piece(TILE_SIZE / 2 - 10);
-                    piece.setPosition(sf::Vector2f(x * TILE_SIZE + 10, y * TILE_SIZE + 10));
-                    piece.setFillColor(board[y][x]->isWhite ? sf::Color::Red : sf::Color::Blue);
-                    window.draw(piece);
-                }
-            }
-        }
     }
 
 private:
-    std::vector<std::vector<piece*>> board;
+    std::vector<std::vector<Piece*>> board;
     std::optional<sf::Vector2i> selected;
 
-    void initBoard() {
-        for (int y = 0; y < 3; y++) {
-            for (int x = 0; x < BOARD_SIZE; x++) {
-                if ((x + y) % 2 != 0)
-                    board[y][x] = new piece{false, false};
-            }
-        }
-        for (int y = 5; y < 8; y++) {
-            for (int x = 0; x < BOARD_SIZE; x++) {
-                if ((x + y) % 2 != 0)
-                    board[y][x] = new piece{true, false};
-            }
-        }
-    }
+
 };
 
 
 
 int main()
 {
-	// sf::RenderWindow window( sf::VideoMode( { 500, 500 } ), "SFML works!" );
 	sf::RenderWindow window(sf::VideoMode({BOARD_SIZE * TILE_SIZE + 200, BOARD_SIZE * TILE_SIZE}), "Checkers");
     Checkers game;
-	// sf::CircleShape shape( 100.f );
-	// shape.setFillColor( sf::Color::White );
 
 	while ( window.isOpen() )
 	{

@@ -4,6 +4,11 @@
 Checkers::Checkers()
     : currentTurn(PieceColor::White), mustContinueJump(false)
 {
+    sf::Image darkSquerImg;
+    if(darkSquerImg.loadFromFile("img/black_squere.jpg")) 
+    {
+        darkSqTex.loadFromImage(darkSquerImg);
+    }
 }
 
 Checkers::~Checkers()

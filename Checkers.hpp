@@ -25,4 +25,7 @@ private:
     sf::RenderWindow window;
     PieceColor currentTurn;
     bool mustContinueJump;
+
+    sf::Texture darkSqTex;
+    sf::Texture lightSqTex;
 };

@@ -3,7 +3,6 @@
 
 Board::Board()
 {
-
     initBoard();
     reset();
 }
@@ -87,5 +86,6 @@ bool Board::isInBounds(int x, int y) const
 
 std::optional<Move> Board::createMove(int fromX, int fromY, int toX, int toY, PieceColor currentTurn) const
 {
+    
     return std::nullopt;
 }

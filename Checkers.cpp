@@ -67,7 +67,7 @@ void Checkers::handleClick(int mouseX, int mouseY, sf::Vector2u  winSize)
         }
         else
         {
-
+            
         }
         return;
     }

@@ -1,14 +1,44 @@
 #include "Checkers.hpp"
 
+void drawPieceSpeite(sf::RenderWindow &window, sf::Texture texture, float x, float y)
+{
+    sf::Sprite sprite(texture);
+    float scale;
+    sprite.getTexture().getSize().x > sprite.getTexture().getSize().y
+                    ? scale = (float)TILE_SIZE / sprite.getTexture().getSize().x
+                    : scale = (float)TILE_SIZE / sprite.getTexture().getSize().y;
+
+    // float scaleX = (float)TILE_SIZE / sprite.getTexture().getSize().x;
+    // float scaleY = (float)TILE_SIZE / sprite.getTexture().getSize().y;
+    sprite.setScale({scale * 1.0f, scale * 1.0f});
+
+    sprite.setPosition({x * TILE_SIZE + TILE_SIZE * 0.05f, y * TILE_SIZE + (TILE_SIZE - scale * sprite.getTexture().getSize().y)/2});
+    window.draw(sprite);
+}
+
 
 Checkers::Checkers()
     : currentTurn(PieceColor::White), mustContinueJump(false)
 {
-    sf::Image darkSquerImg;
-    if(darkSquerImg.loadFromFile("img/black_squere.jpg")) 
+    sf::Image blackPieaceImg;
+    if(blackPieaceImg.loadFromFile("img/black_cat.png")) 
     {
-        darkSqTex.loadFromImage(darkSquerImg);
+        blackPieceTex.loadFromImage(blackPieaceImg);
     }
+
+    sf::Image whitePieceImg;
+    if(whitePieceImg.loadFromFile("img/white_cat.png")) 
+    {
+        whitePieceTex.loadFromImage(whitePieceImg);
+    }
+
+    sf::Image boardImg;
+    if(boardImg.loadFromFile("img/chto-takoe-shahmatnaya-doska.jpg")) 
+    {
+        boardTex.loadFromImage(boardImg);
+    }
+
+    // Board board();
 }
 
 Checkers::~Checkers()
@@ -37,6 +67,7 @@ void Checkers::handleClick(int mouseX, int mouseY, sf::Vector2u  winSize)
         }
         else
         {
+
         }
         return;
     }
@@ -72,6 +103,62 @@ void Checkers::handleClick(int mouseX, int mouseY, sf::Vector2u  winSize)
 
 void Checkers::draw(sf::RenderWindow& window)
 {
+    // for(int x = 0; x < BOARD_SIZE; x++)
+    // {
+    //     for (int y = 0; y < BOARD_SIZE; y++)
+    //     {
+    //         sf::Texture sqTex;
+            //check for even
+            // if((x + y) % 2 == 0)
+            // {
+            //     sqTex(darkSqTex);
+
+            // }
+            // else
+            // {
+            //     sqTex(darkSqTex);
+
+
+            // }
+    //         sf::Sprite sprite(sqTex);
+    //         sprite.setPosition({x * TILE_SIZE + TILE_SIZE * 0.1f,
+    //                        y * TILE_SIZE + TILE_SIZE * 0.1f});
+    //     }
+    // }
+
+
+    //Draw board
+    sf::Sprite sprite(boardTex);
+    sprite.setScale({1.66f, 1.66f});
+    // sprite.setPosition({TILE_SIZE + TILE_SIZE * 0.1f, TILE_SIZE + TILE_SIZE * 0.1f});
+    window.draw(sprite);
+
+    // Highlight selected
+
+    // Draw pieces
+    for (int x = 0; x < BOARD_SIZE; x++)
+    {
+        for (int y = 0; y < BOARD_SIZE; y++)
+        {
+            const Piece &p = board.getPieceAt(x, y);
+            
+            if(p.isEmpty())
+            {
+                drawPieceSpeite(window, blackPieceTex, x, y);
+                if(p.color == PieceColor::Black)
+                {
+                    drawPieceSpeite(window, blackPieceTex, x, y);
+                }
+                if(p.color == PieceColor::White)
+                {
+                    drawPieceSpeite(window, whitePieceTex, x, y);
+                }
+            }
+        }
+        
+    }
+
+    
 
 };
 

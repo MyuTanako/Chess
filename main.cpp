@@ -3,7 +3,7 @@
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode({BOARD_SIZE * TILE_SIZE + 200, BOARD_SIZE * TILE_SIZE}), "Checkers");
+	sf::RenderWindow window(sf::VideoMode({BOARD_SIZE * TILE_SIZE + 20, BOARD_SIZE * TILE_SIZE + 20}), "Checkers");
     Checkers game;
 
 	while ( window.isOpen() )

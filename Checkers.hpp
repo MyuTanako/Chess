@@ -4,7 +4,7 @@
 #include "Board.hpp"
 #include "Piece.hpp"
 
-const int TILE_SIZE = 60;
+const int TILE_SIZE = 100;
 
 class Checkers {
 public:
@@ -28,4 +28,7 @@ private:
 
     sf::Texture darkSqTex;
     sf::Texture lightSqTex;
+    sf::Texture boardTex;
+    sf::Texture blackPieceTex;
+    sf::Texture whitePieceTex;
 };

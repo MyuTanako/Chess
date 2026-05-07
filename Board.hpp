@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
 #include "Piece.hpp"
 #include <optional>
 #include <vector>

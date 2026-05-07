@@ -3,6 +3,7 @@
 
 Board::Board()
 {
+    
     initBoard();
     reset();
 }
@@ -84,7 +85,7 @@ bool Board::isInBounds(int x, int y) const
     return x >= 0 && x < 8 && y >= 0 && y < 8;
 }
 
-std::optional<Move> Board::parseMove(int fromX, int fromY, int toX, int toY, PieceColor currentTurn) const
+std::optional<Move> Board::createMove(int fromX, int fromY, int toX, int toY, PieceColor currentTurn) const
 {
-
+    return std::nullopt;
 }

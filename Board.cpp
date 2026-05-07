@@ -3,7 +3,7 @@
 
 Board::Board()
 {
-    
+
     initBoard();
     reset();
 }
@@ -19,11 +19,11 @@ void Board::reset()
             {
                 grid_piece[y][x] = {PieceColor::Black, PieceType::Man};
             }
-        }
-  }
-  // White at bottom (y = 5, 6, 7)
-  for (int y = 5; y < 8; ++y)
-  {
+            }
+    }
+    // White at bottom (y = 5, 6, 7)
+    for (int y = 5; y < 8; ++y)
+    {
         for (int x = 0; x < 8; ++x)
         {
             if ((x + y) % 2 != 0)
@@ -31,7 +31,7 @@ void Board::reset()
                 grid_piece[y][x] = {PieceColor::White, PieceType::Man};
             }
         }
-  }
+    }
 }
 
 void Board::initBoard()
@@ -57,7 +57,7 @@ void Board::initBoard()
 
 const Piece &Board::getPieceAt(int x, int y) const
 {
-    if(isInBounds(x, y)) 
+    if(!isInBounds(x, y)) 
     {
         static Piece empty;
         return empty;

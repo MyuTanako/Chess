@@ -1,6 +1,6 @@
 #include "Checkers.hpp"
 
-void drawPieceSpeite(sf::RenderWindow &window, sf::Texture texture, float x, float y)
+void drawPieceSprite(sf::RenderWindow &window, sf::Texture texture, float x, float y)
 {
     sf::Sprite sprite(texture);
     float scale;
@@ -103,63 +103,40 @@ void Checkers::handleClick(int mouseX, int mouseY, sf::Vector2u  winSize)
 
 void Checkers::draw(sf::RenderWindow& window)
 {
-    // for(int x = 0; x < BOARD_SIZE; x++)
-    // {
-    //     for (int y = 0; y < BOARD_SIZE; y++)
-    //     {
-    //         sf::Texture sqTex;
-            //check for even
-            // if((x + y) % 2 == 0)
-            // {
-            //     sqTex(darkSqTex);
-
-            // }
-            // else
-            // {
-            //     sqTex(darkSqTex);
-
-
-            // }
-    //         sf::Sprite sprite(sqTex);
-    //         sprite.setPosition({x * TILE_SIZE + TILE_SIZE * 0.1f,
-    //                        y * TILE_SIZE + TILE_SIZE * 0.1f});
-    //     }
-    // }
-
-
     //Draw board
     sf::Sprite sprite(boardTex);
     sprite.setScale({1.66f, 1.66f});
     // sprite.setPosition({TILE_SIZE + TILE_SIZE * 0.1f, TILE_SIZE + TILE_SIZE * 0.1f});
     window.draw(sprite);
 
-    // Highlight selected
 
-    // Draw pieces
     for (int x = 0; x < BOARD_SIZE; x++)
     {
         for (int y = 0; y < BOARD_SIZE; y++)
         {
-            const Piece &p = board.getPieceAt(x, y);
-            
-            if(p.isEmpty())
+            // Highlight selected
+            if (selected && selected->x == x && selected->y == y)
             {
-                drawPieceSpeite(window, blackPieceTex, x, y);
+                sf::CircleShape hl(TILE_SIZE / 2);
+                hl.setPosition({x * (float)TILE_SIZE, y * (float)TILE_SIZE});
+                hl.setFillColor(sf::Color(255, 255, 0, 100)); // Yellowish transparent
+                window.draw(hl);
+            }
+            // Draw pieces
+            const Piece &p = board.getPieceAt(x, y);
+            if(!p.isEmpty())
+            {
                 if(p.color == PieceColor::Black)
                 {
-                    drawPieceSpeite(window, blackPieceTex, x, y);
+                    drawPieceSprite(window, blackPieceTex, x, y);
                 }
                 if(p.color == PieceColor::White)
                 {
-                    drawPieceSpeite(window, whitePieceTex, x, y);
+                    drawPieceSprite(window, whitePieceTex, x, y);
                 }
             }
         }
-        
     }
-
-    
-
 };
 
 void Checkers::endTurn()

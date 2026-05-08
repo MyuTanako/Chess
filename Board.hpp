@@ -49,4 +49,6 @@ SquereColor grid_squers[BOARD_SIZE][BOARD_SIZE] = {SquereColor::None};
 void initBoard();
 
 bool Board::isInBounds(int x, int y) const;
+
+void promoteIfNeeded(int x, int y);
 };

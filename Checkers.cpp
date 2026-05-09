@@ -60,16 +60,25 @@ void Checkers::handleClick(int mouseX, int mouseY, sf::Vector2u  winSize)
     // If nothing selected yet
     if (!selected.has_value())
     {
-        const Piece &p = board.getPieceAt(x, y);
+        const Piece &p = board.getPiece(x, y);
         if (p.color == currentTurn)
         {
+            // Check if player has forced jumps
+            if (board.hasForcedJumps(currentTurn))
+            {
+                if(board.hasForcedJumpsForPiece(x, y))
+                {
+                    selected = {x, y};
+                }
+                // return;
+            }
             selected = {x, y};
         }
         return;
     }
 
     // We selected and if we click on another of our pieces we change selection
-    const Piece &p = board.getPieceAt(x, y);
+    const Piece &p = board.getPiece(x, y);
     if (/*!mustContinueJump && */p.color == currentTurn)
     {
         selected = {x, y};
@@ -119,7 +128,7 @@ void Checkers::draw(sf::RenderWindow& window)
                 window.draw(hl);
             }
             // Draw pieces
-            const Piece &p = board.getPieceAt(x, y);
+            const Piece &p = board.getPiece(x, y); 
             if(!p.isEmpty())
             {
                 if(p.color == PieceColor::Black)

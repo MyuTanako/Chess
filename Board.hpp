@@ -22,7 +22,7 @@ public:
 Board();
 
 void reset();
-const Piece &getPieceAt(int x, int y) const;
+const Piece &getPiece(int x, int y) const;
 
 // Checks if a proposed move is valid
 bool isMoveValid(int fromX, int fromY, int toX, int toY, PieceColor currentTurn) const;
@@ -30,12 +30,14 @@ bool isMoveValid(int fromX, int fromY, int toX, int toY, PieceColor currentTurn)
 // Updates the board state with the given move
 void makeMove(const Move &move);
 
-// Determines if a player has any forced jumps available
-bool hasForcedJumps(PieceColor color) const;
-
 //Return Move object, all logic inside
 std::optional<Move> createMove(int fromX, int fromY, int toX, int toY, PieceColor currentTurn) const;
 
+// Determines if a player has any forced jumps available
+bool hasForcedJumps(PieceColor color) const;
+
+//Helping function for "hasForcedJumps"
+bool Board::hasForcedJumpsForPiece(int x, int y) const;
 
 private:
 
@@ -43,12 +45,14 @@ private:
 Piece grid_piece[BOARD_SIZE][BOARD_SIZE] = {PieceColor::None};
 
 // The grid of Squere filling with no color
-SquereColor grid_squers[BOARD_SIZE][BOARD_SIZE] = {SquereColor::None};
+SquereColor grid_squares[BOARD_SIZE][BOARD_SIZE] = {SquereColor::None};
 
 // Game board initialisation
 void initBoard();
 
+//Check the bounds
 bool Board::isInBounds(int x, int y) const;
 
+//Check and promote piece to King
 void promoteIfNeeded(int x, int y);
 };

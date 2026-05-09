@@ -41,11 +41,11 @@ void Board::initBoard()
         {
             if((i % 2 + j % 2) == 0)
             {
-                grid_squers[i][j] = {SquereColor::Black};
+                grid_squares[i][j] = {SquereColor::Black};
             }
             else
             {
-                grid_squers[i][j] = {SquereColor::White};
+                grid_squares[i][j] = {SquereColor::White};
             }
         }
     }
@@ -54,7 +54,7 @@ void Board::initBoard()
 
 }
 
-const Piece &Board::getPieceAt(int x, int y) const
+const Piece &Board::getPiece(int x, int y) const
 {
     if(!isInBounds(x, y)) 
     {
@@ -79,7 +79,7 @@ void Board::makeMove(const Move &move)
     grid_piece[move.fromY][move.fromX] = Piece();
     if (move.capturedPiece)
     {
-        grid_piece[move.capturedPiece->x][move.capturedPiece->y] = Piece();
+        grid_piece[move.capturedPiece->y][move.capturedPiece->x] = Piece();
     }
 
     promoteIfNeeded(move.toX, move.toY);
@@ -102,7 +102,87 @@ void Board::promoteIfNeeded(int x, int y) {
 
 bool Board::hasForcedJumps(PieceColor color) const
 {
-    return 0;
+    for (int y = 0; y < 8; ++y)
+    {
+        for (int x = 0; x < 8; ++x)
+        {
+            if (grid_piece[y][x].color == color)
+            {
+                if (hasForcedJumpsForPiece(x, y))
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Board::hasForcedJumpsForPiece(int x, int y) const
+{
+    const Piece &p = grid_piece[y][x];
+    if (p.isEmpty())
+    {
+        return false;
+    }
+
+    int dirS[4][2] = {{-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
+
+    if (p.type == PieceType::Man)
+    {
+        for (auto d : dirS)
+        {
+            int toX = x + d[0] * 2;
+            int toY = y + d[1] * 2;
+
+            auto move = createMove(x, y, toX, toY, p.color);
+            if (move.has_value() && move->capturedPiece)
+            {
+                return true;
+            }
+        }
+    } 
+    else if (p.type == PieceType::King)
+    {
+        for (auto d : dirS)
+        {
+            int currentX = x + d[0];
+            int currentY = y + d[1];
+
+            bool foundEnemy = false;
+
+            while (isInBounds(currentX, currentY))
+            {
+                const Piece &pathP = grid_piece[currentY][currentX];
+
+                if (!pathP.isEmpty()) 
+                {
+                    if (pathP.color == p.color) 
+                    {
+                        break; // Blocked by friendly piece
+                    }
+                    else 
+                    {
+                        // Found an enemy! Check if the square directly behind it is empty.
+                        if (foundEnemy)
+                        {
+                            break; // Cannot jump two enemies in a row
+                        }
+                        foundEnemy = true;
+                    }
+                }
+                else
+                {
+                    if (foundEnemy)
+                    {
+                        // We found an enemy and now an empty square! This is a valid jump.
+                        return true;
+                    }
+                }
+                currentX += d[0];
+                currentY += d[1];
+            }
+        }
+    }
+    return false;
 }
 
 bool Board::isInBounds(int x, int y) const
@@ -112,25 +192,29 @@ bool Board::isInBounds(int x, int y) const
 
 std::optional<Move> Board::createMove(int fromX, int fromY, int toX, int toY, PieceColor currentTurn) const
 {
+    //check bounds
     if (!isInBounds(fromX, fromY) || !isInBounds(toX, toY))
     {
         return std::nullopt;
     }
 
+    //check turn
     const Piece &p = grid_piece[fromY][fromX];
     if (p.color != currentTurn)
     {
         return std::nullopt;
     }
 
+    //check empty
     if (!grid_piece[toY][toX].isEmpty())
     {
         return std::nullopt;
     }
 
+    // moves only on dark squares
     if ((toX + toY) % 2 == 0)
     {
-        return std::nullopt; // Moves only on dark squares
+        return std::nullopt; 
     }
         
     int dx = toX - fromX;
@@ -138,17 +222,22 @@ std::optional<Move> Board::createMove(int fromX, int fromY, int toX, int toY, Pi
 
     int absDx = std::abs(dx);
     int absDy = std::abs(dy);
-
+    
+    // must be diagonal
     if (absDx != absDy || absDx == 0)
     {
-        return std::nullopt; // Must be diagonal
+        return std::nullopt; 
     }
 
+    //direction of Y
+    //for white is -1 because the direction of Y must decrease
+    //for black is 1 because the direction of Y must increase
     int dirY = (p.color == PieceColor::White) ? -1 : 1;
 
+    //logic for regular piece
     if (p.type == PieceType::Man)
     {
-        // Regular move
+        // Regular diagonal move
         if (absDx == 1)
         {
             if (dy != dirY)
@@ -161,8 +250,7 @@ std::optional<Move> Board::createMove(int fromX, int fromY, int toX, int toY, Pi
         // Jump move
         if (absDx == 2)
         {
-            // Russian Checkers: Men can capture backward, so we don't constrain dy to
-            // dirY * 2
+            // Russian Checkers: Men can capture backward, so we don't constrain dy to dirY * 2
             int midX = fromX + dx / 2;
             int midY = fromY + dy / 2;
             const Piece &midPiece = grid_piece[midY][midX];
@@ -174,7 +262,7 @@ std::optional<Move> Board::createMove(int fromX, int fromY, int toX, int toY, Pi
         }
         return std::nullopt;
     }
-    else if (p.type == PieceType::King)
+    else if (p.type == PieceType::King) //logic for King piece
     {
         // King logic ("flying king")
         // Any diagonal distance. We track the pieces we hop over.
@@ -187,6 +275,7 @@ std::optional<Move> Board::createMove(int fromX, int fromY, int toX, int toY, Pi
         int piecesCount = 0;
         std::optional<sf::Vector2i> capPiece = std::nullopt;
 
+        //Check all diagonal squares from current position to expection position 
         while (currentX != toX && currentY != toY)
         {
             const Piece &pathP = grid_piece[currentY][currentX];

@@ -9,31 +9,64 @@ Board::Board()
 
 void Board::reset()
 {
-    // Black at top (y = 0, 1, 2)
-    for (int y = 0; y < 3; ++y)
+    Piece black{PieceColor::Black, PieceType::Man};
+    Piece white{PieceColor::White, PieceType::Man};
+    Piece none{PieceColor::None, PieceType::Man};
+
+    // Piece grid[BOARD_SIZE][BOARD_SIZE] 
+    // = { {none,  black, none,  black, none,  black, none,  black},
+    //     {black, none,  black, none,  black, none,  black, none},
+    //     {none,  black, none,  black, none,  black, none,  black},
+    //     {none,  none,  none,  none,  none,  none,  none,  none},
+    //     {none,  none,  none,  none,  none,  none,  none,  none},
+    //     {white, none,  white, none,  white, none,  white, none},
+    //     {none,  white, none,  white, none,  white, none,  white},
+    //     {white, none,  white, none,  white, none,  white, none}};
+
+        Piece grid[BOARD_SIZE][BOARD_SIZE] 
+    = { {none,  black, none,  black, none,  none,  none,  black},
+        {black, none,  black, none,  none,  none,  white, none},
+        {none,  black, none,  black, none,  none,  none,  black},
+        {none,  none,  none,  none,  none,  none,  none,  none},
+        {none,  none,  none,  none,  none,  none,  none,  none},
+        {white, none,  white, none,  white, none,  white, none},
+        {none,  white, none,  white, none,  white, none,  white},
+        {white, none,  white, none,  white, none,  white, none}};
+
+    for (int y = 0; y < BOARD_SIZE; ++y)
     {
-        for (int x = 0; x < 8; ++x)
+        for (int x = 0; x < BOARD_SIZE; ++x)
         {
-            if ((x + y) % 2 != 0)
-            {
-                grid_piece[y][x] = {PieceColor::Black, PieceType::Man};
-            }
-            }
-    }
-    // White at bottom (y = 5, 6, 7)
-    for (int y = 5; y < 8; ++y)
-    {
-        for (int x = 0; x < 8; ++x)
-        {
-            if ((x + y) % 2 != 0)
-            {
-                grid_piece[y][x] = {PieceColor::White, PieceType::Man};
-            }
+            grid_piece[y][x] = grid[y][x];
         }
     }
+
+
+    // Black at top (y = 0, 1, 2)
+    // for (int y = 0; y < 3; ++y)
+    // {
+    //     for (int x = 0; x < 8; ++x)
+    //     {
+    //         if ((x + y) % 2 != 0)
+    //         {
+    //             grid_piece[y][x] = {PieceColor::Black, PieceType::Man};
+    //         }
+    //         }
+    // }
+    // // White at bottom (y = 5, 6, 7)
+    // for (int y = 5; y < 8; ++y)
+    // {
+    //     for (int x = 0; x < 8; ++x)
+    //     {
+    //         if ((x + y) % 2 != 0)
+    //         {
+    //             grid_piece[y][x] = {PieceColor::White, PieceType::Man};
+    //         }
+    //     }
+    // }
 }
 
-void Board::initBoard()
+void Board::initBoard() 
 {
     for(int i = 0; i < BOARD_SIZE; ++i)
     {
@@ -51,7 +84,6 @@ void Board::initBoard()
     }
 
     reset();
-
 }
 
 const Piece &Board::getPiece(int x, int y) const
@@ -308,4 +340,82 @@ std::optional<Move> Board::createMove(int fromX, int fromY, int toX, int toY, Pi
 
     
     return std::nullopt;
+}
+
+PieceColor Board::checkWin(PieceColor currentTurn)
+{
+    //If all pieces one color was catched
+    int blackCounter = 0;
+    int whiteCounter = 0;
+    for (int y = 0; y < BOARD_SIZE; ++y)
+    {
+        for (int x = 0; x < BOARD_SIZE; ++x)
+        {
+            if(grid_piece[y][x].color == PieceColor::Black)
+            {
+                blackCounter++;
+            }
+            if(grid_piece[y][x].color == PieceColor::White)
+            {
+                whiteCounter++;
+            }
+        }
+    }
+
+    if(blackCounter == 0)
+    {
+        return PieceColor::White;
+    }
+    if(whiteCounter == 0)
+    {
+        return PieceColor::Black;
+    }
+
+    //If there no moves
+    for (int y = 0; y < BOARD_SIZE; ++y)
+    {
+        for (int x = 0; x < BOARD_SIZE; ++x)
+        {
+            if(grid_piece[y][x].color == PieceColor::Black)
+            {
+                blackCounter++;
+            }
+            if(grid_piece[y][x].color == PieceColor::White)
+            {
+                whiteCounter++;
+            }
+        }
+    }
+
+
+
+
+    return PieceColor::None;
+
+}
+
+bool Board::checkIfCanMove(PieceColor currentTurn)
+{
+    if(hasForcedJumps(currentTurn))
+    {
+        return true;
+    }
+
+    for (int y = 0; y < BOARD_SIZE; ++y)
+    {
+        for (int x = 0; x < BOARD_SIZE; ++x)
+        {
+            if (grid_piece[y][x].color == currentTurn)
+            {
+                if (checkIfCanMoveForPiece(x, y))
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Board::checkIfCanMoveForPiece(int x, int y)
+{
+    return false;
 }

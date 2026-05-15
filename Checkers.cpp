@@ -37,8 +37,11 @@ Checkers::Checkers()
     {
         boardTex.loadFromImage(boardImg);
     }
-
-    // Board board();
+    sf::Image gunImg;
+    if(gunImg.loadFromFile("img/gun.png")) 
+    {
+        kingGunTex.loadFromImage(gunImg);
+    }
 }
 
 Checkers::~Checkers()
@@ -55,7 +58,9 @@ void Checkers::handleClick(int mouseX, int mouseY, sf::Vector2u  winSize)
 
 
     if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE)
+    {
         return;
+    }
 
     // If nothing selected yet
     if (!selected.has_value())
@@ -70,19 +75,32 @@ void Checkers::handleClick(int mouseX, int mouseY, sf::Vector2u  winSize)
                 {
                     selected = {x, y};
                 }
-                // return;
             }
-            selected = {x, y};
+            else
+            {
+                selected = {x, y};
+            }
+            
         }
         return;
     }
 
     // We selected and if we click on another of our pieces we change selection
     const Piece &p = board.getPiece(x, y);
-    if (/*!mustContinueJump && */p.color == currentTurn)
+    if (!mustContinueJump && p.color == currentTurn)
     {
-        selected = {x, y};
-        return; 
+        if (board.hasForcedJumps(currentTurn))
+        {
+            if (board.hasForcedJumpsForPiece(x, y))
+            {
+                selected = {x, y};
+            }
+        }
+        else 
+        {
+            selected = {x, y};
+        }
+        return;
     }
     
     // Otherwise try to move
@@ -97,13 +115,26 @@ void Checkers::handleClick(int mouseX, int mouseY, sf::Vector2u  winSize)
             bool wasJump = moveOpt->capturedPiece.has_value();
             board.makeMove(*moveOpt);
 
-
-            endTurn();
+            if (wasJump && board.hasForcedJumpsForPiece(x, y))
+            {
+                // Must continue jumping
+                mustContinueJump = true;
+                selected = {x, y};
+            }
+            else
+            {
+                endTurn();
+            }
         }
     }
-
-
-
+    else
+    {
+        // Deselect if invalid move and not forced to continue jump
+        if (!mustContinueJump)
+        {
+            selected = std::nullopt;
+        }
+    }
 }
 
 void Checkers::draw(sf::RenderWindow& window)
@@ -140,6 +171,17 @@ void Checkers::draw(sf::RenderWindow& window)
                     drawPieceSprite(window, whitePieceTex, x, y);
                 }
             }
+
+            if(p.type == PieceType::King)
+            {
+                sf::Sprite kingGun(kingGunTex);
+                float cScaleX = (float)TILE_SIZE / kingGunTex.getSize().x;
+                float cScaleY = (float)TILE_SIZE / kingGunTex.getSize().y;
+                kingGun.setScale({cScaleX * 0.55f, cScaleY * 0.55f});
+                kingGun.setPosition({x * TILE_SIZE + (TILE_SIZE * 0.15f),
+                                     y * TILE_SIZE + (TILE_SIZE * 0.30f)});
+                window.draw(kingGun);
+            }
         }
     }
 };
@@ -147,6 +189,6 @@ void Checkers::draw(sf::RenderWindow& window)
 void Checkers::endTurn()
 {
   selected = std::nullopt;
-  /*mustContinueJump = false;*/
+  mustContinueJump = false;
   currentTurn = (currentTurn == PieceColor::White) ? PieceColor::Black : PieceColor::White;
 }

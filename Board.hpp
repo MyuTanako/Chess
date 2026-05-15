@@ -37,7 +37,13 @@ std::optional<Move> createMove(int fromX, int fromY, int toX, int toY, PieceColo
 bool hasForcedJumps(PieceColor color) const;
 
 //Helping function for "hasForcedJumps"
-bool Board::hasForcedJumpsForPiece(int x, int y) const;
+bool hasForcedJumpsForPiece(int x, int y) const;
+
+PieceColor checkWin(PieceColor currentTurn);
+
+bool checkIfCanMove(PieceColor currentTurn);
+
+bool checkIfCanMoveForPiece(int x, int y);
 
 private:
 

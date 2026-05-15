@@ -26,9 +26,8 @@ private:
     PieceColor currentTurn;
     bool mustContinueJump;
 
-    sf::Texture darkSqTex;
-    sf::Texture lightSqTex;
     sf::Texture boardTex;
     sf::Texture blackPieceTex;
     sf::Texture whitePieceTex;
+    sf::Texture kingGunTex;
 };

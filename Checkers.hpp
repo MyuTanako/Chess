@@ -24,6 +24,7 @@ private:
     Board board;
     sf::RenderWindow window;
     PieceColor currentTurn;
+    PieceColor winner = PieceColor::None;
     bool mustContinueJump;
 
     sf::Texture boardTex;

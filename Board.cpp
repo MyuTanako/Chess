@@ -13,25 +13,25 @@ void Board::reset()
     Piece white{PieceColor::White, PieceType::Man};
     Piece none{PieceColor::None, PieceType::Man};
 
-    // Piece grid[BOARD_SIZE][BOARD_SIZE] 
-    // = { {none,  black, none,  black, none,  black, none,  black},
-    //     {black, none,  black, none,  black, none,  black, none},
-    //     {none,  black, none,  black, none,  black, none,  black},
-    //     {none,  none,  none,  none,  none,  none,  none,  none},
-    //     {none,  none,  none,  none,  none,  none,  none,  none},
-    //     {white, none,  white, none,  white, none,  white, none},
-    //     {none,  white, none,  white, none,  white, none,  white},
-    //     {white, none,  white, none,  white, none,  white, none}};
-
-        Piece grid[BOARD_SIZE][BOARD_SIZE] 
-    = { {none,  black, none,  black, none,  none,  none,  black},
-        {black, none,  black, none,  none,  none,  white, none},
-        {none,  black, none,  black, none,  none,  none,  black},
+    Piece grid[BOARD_SIZE][BOARD_SIZE] 
+    = { {none,  black, none,  black, none,  black, none,  black},
+        {black, none,  black, none,  black, none,  black, none},
+        {none,  black, none,  black, none,  black, none,  black},
         {none,  none,  none,  none,  none,  none,  none,  none},
         {none,  none,  none,  none,  none,  none,  none,  none},
         {white, none,  white, none,  white, none,  white, none},
         {none,  white, none,  white, none,  white, none,  white},
         {white, none,  white, none,  white, none,  white, none}};
+
+    //     Piece grid[BOARD_SIZE][BOARD_SIZE] 
+    // = { {none,  black, none,  black, none,  black,  none,  black},
+    //     {black, none,  black, none,  none,  none,   black, none},
+    //     {none,  black, none,  none,  none,  black,  none,  black},
+    //     {white, none,  white, none,  white, none,   white, none},
+    //     {none,  white, none,  white, none,  white,  none,  white},
+    //     {white, none,  white, none,  white, none,   white, none},
+    //     {none,  white, none,  white, none,  none,   none,  white},
+    //     {white, none,  white, none,  white, none,   white, none}};
 
     for (int y = 0; y < BOARD_SIZE; ++y)
     {
@@ -134,9 +134,9 @@ void Board::promoteIfNeeded(int x, int y) {
 
 bool Board::hasForcedJumps(PieceColor color) const
 {
-    for (int y = 0; y < 8; ++y)
+    for (int y = 0; y < BOARD_SIZE; ++y)
     {
-        for (int x = 0; x < 8; ++x)
+        for (int x = 0; x < BOARD_SIZE; ++x)
         {
             if (grid_piece[y][x].color == color)
             {
@@ -372,23 +372,12 @@ PieceColor Board::checkWin(PieceColor currentTurn)
     }
 
     //If there no moves
-    for (int y = 0; y < BOARD_SIZE; ++y)
+    
+
+    if(checkIfCanMove(currentTurn))
     {
-        for (int x = 0; x < BOARD_SIZE; ++x)
-        {
-            if(grid_piece[y][x].color == PieceColor::Black)
-            {
-                blackCounter++;
-            }
-            if(grid_piece[y][x].color == PieceColor::White)
-            {
-                whiteCounter++;
-            }
-        }
+        return currentTurn;
     }
-
-
-
 
     return PieceColor::None;
 
@@ -398,7 +387,7 @@ bool Board::checkIfCanMove(PieceColor currentTurn)
 {
     if(hasForcedJumps(currentTurn))
     {
-        return true;
+        return false;
     }
 
     for (int y = 0; y < BOARD_SIZE; ++y)
@@ -417,5 +406,20 @@ bool Board::checkIfCanMove(PieceColor currentTurn)
 
 bool Board::checkIfCanMoveForPiece(int x, int y)
 {
+    const Piece &p = grid_piece[y][x];
+
+    int dirS[4][2] = {{-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
+
+    for (auto d : dirS)
+    {
+        int toX = x + d[0] * 2;
+        int toY = y + d[1] * 2;
+
+        auto move = createMove(x, y, toX, toY, p.color);
+        if (move.has_value())
+        {
+            return true;
+        }
+    }
     return false;
 }

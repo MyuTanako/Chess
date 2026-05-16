@@ -120,9 +120,11 @@ void Checkers::handleClick(int mouseX, int mouseY, sf::Vector2u  winSize)
                 // Must continue jumping
                 mustContinueJump = true;
                 selected = {x, y};
+                return;
             }
             else
             {
+                winner = board.checkWin(currentTurn);
                 endTurn();
             }
         }
@@ -183,6 +185,26 @@ void Checkers::draw(sf::RenderWindow& window)
                 window.draw(kingGun);
             }
         }
+    }
+    
+    if(winner != PieceColor::None)
+    {
+        sf::Font font;
+        font.openFromFile("img/font.ttf");
+        sf::Text text(font);
+        if(winner == PieceColor::Black)
+        {
+            text.setString("Black won!");
+        }
+        else
+        {
+            text.setString("White won!");
+        }
+        
+        text.setCharacterSize(110);
+        text.setFillColor(sf::Color::Red);
+        text.setPosition({100.f, 300.f});
+        window.draw(text);
     }
 };
 

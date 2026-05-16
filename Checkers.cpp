@@ -51,8 +51,8 @@ Checkers::~Checkers()
 
 void Checkers::handleClick(int mouseX, int mouseY, sf::Vector2u  winSize)
 {
-    float scaleX = 800.0f / winSize.x;
-    float scaleY = 800.0f / winSize.y;
+    float scaleX = 800.0f / (winSize.x - (BOARD_SIZE * TILE_SIZE * 0.25f));
+    float scaleY = 800.0f / (winSize.y - (BOARD_SIZE * TILE_SIZE * 0.03f));
     int x = static_cast<int>(mouseX * scaleX) / TILE_SIZE;
     int y = static_cast<int>(mouseY * scaleY) / TILE_SIZE;
 
@@ -114,6 +114,12 @@ void Checkers::handleClick(int mouseX, int mouseY, sf::Vector2u  winSize)
         {
             bool wasJump = moveOpt->capturedPiece.has_value();
             board.makeMove(*moveOpt);
+
+            if(wasJump)
+            {
+                currentTurn == PieceColor::Black ? counterBlack++ : counterWhite++;
+            }
+            
 
             if (wasJump && board.hasForcedJumpsForPiece(x, y))
             {
@@ -186,7 +192,10 @@ void Checkers::draw(sf::RenderWindow& window)
             }
         }
     }
-    
+
+    sf::Font font;
+    font.openFromFile("img/font.ttf");
+    //Winning message
     if(winner != PieceColor::None)
     {
         sf::Font font;
@@ -206,6 +215,29 @@ void Checkers::draw(sf::RenderWindow& window)
         text.setPosition({100.f, 300.f});
         window.draw(text);
     }
+    
+    //Counter
+    {
+        sf::Text text(font);
+        text.setString("Counter");
+        text.setCharacterSize(30);
+        text.setFillColor(sf::Color::Red);
+        text.setPosition({845.f, 375.f});
+        window.draw(text);
+
+        std::string str = std::to_string(counterBlack);
+        text.setString(str);
+        text.setCharacterSize(50);
+        text.setPosition({845.f, 175.f});
+        window.draw(text);
+
+        str = std::to_string(counterWhite);
+        text.setString(str);
+        text.setCharacterSize(50);
+        text.setPosition({845.f, 575.f});
+        window.draw(text);
+    }
+
 };
 
 void Checkers::endTurn()

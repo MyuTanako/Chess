@@ -26,6 +26,8 @@ private:
     PieceColor currentTurn;
     PieceColor winner = PieceColor::None;
     bool mustContinueJump;
+    int counterBlack = 0;
+    int counterWhite = 0;
 
     sf::Texture boardTex;
     sf::Texture blackPieceTex;

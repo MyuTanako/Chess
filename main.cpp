@@ -3,7 +3,9 @@
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode({BOARD_SIZE * TILE_SIZE + 20, BOARD_SIZE * TILE_SIZE + 20}), "Checkers");
+	unsigned int x_size = BOARD_SIZE * TILE_SIZE + (BOARD_SIZE * TILE_SIZE * 0.25);
+	unsigned int y_size = BOARD_SIZE * TILE_SIZE + (BOARD_SIZE * TILE_SIZE * 0.03);
+	sf::RenderWindow window(sf::VideoMode({x_size, y_size}), "Checkers");
     Checkers game;
 
 	while ( window.isOpen() )

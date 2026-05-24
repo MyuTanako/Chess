@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "Checkers.hpp"
 
-int main()
+int WinMain()
 {
 	unsigned int x_size = BOARD_SIZE * TILE_SIZE + (BOARD_SIZE * TILE_SIZE * 0.25);
 	unsigned int y_size = BOARD_SIZE * TILE_SIZE + (BOARD_SIZE * TILE_SIZE * 0.03);

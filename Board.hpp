@@ -21,6 +21,8 @@ public:
 // Constructor
 Board();
 
+public:
+
 void reset();
 const Piece &getPiece(int x, int y) const;
 
@@ -52,9 +54,6 @@ private:
 
 // The grid of pieces filling with no pieces
 Piece grid_piece[BOARD_SIZE][BOARD_SIZE] = {PieceColor::None};
-
-// The grid of Squere filling with no color
-SquereColor grid_squares[BOARD_SIZE][BOARD_SIZE] = {SquereColor::None};
 
 // Game board initialisation
 void initBoard();

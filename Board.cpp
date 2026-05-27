@@ -68,21 +68,6 @@ void Board::reset()
 
 void Board::initBoard() 
 {
-    for(int i = 0; i < BOARD_SIZE; ++i)
-    {
-        for (int j = 0; j < BOARD_SIZE; ++j)
-        {
-            if((i % 2 + j % 2) == 0)
-            {
-                grid_squares[i][j] = {SquereColor::Black};
-            }
-            else
-            {
-                grid_squares[i][j] = {SquereColor::White};
-            }
-        }
-    }
-
     reset();
 }
 
@@ -371,23 +356,21 @@ PieceColor Board::checkWin(PieceColor currentTurn)
         return PieceColor::Black;
     }
 
-    //If there no moves
-    
-
-    if(checkIfCanMove(currentTurn))
+    //If there are no moves for the current active player, they lose, and the other player wins
+    if(!checkIfCanMove(currentTurn))
     {
-        return currentTurn;
+        return (currentTurn == PieceColor::White) ? PieceColor::Black : PieceColor::White;
     }
 
     return PieceColor::None;
-
 }
 
 bool Board::checkIfCanMove(PieceColor currentTurn)
 {
+    // If there is a forced jump, the player definitely has a move
     if(hasForcedJumps(currentTurn))
     {
-        return false;
+        return true;
     }
 
     for (int y = 0; y < BOARD_SIZE; ++y)
@@ -397,7 +380,7 @@ bool Board::checkIfCanMove(PieceColor currentTurn)
             if (grid_piece[y][x].color == currentTurn)
             {
                 if (checkIfCanMoveForPiece(x, y))
-                return true;
+                    return true;
             }
         }
     }
@@ -407,18 +390,20 @@ bool Board::checkIfCanMove(PieceColor currentTurn)
 bool Board::checkIfCanMoveForPiece(int x, int y)
 {
     const Piece &p = grid_piece[y][x];
-
-    int dirS[4][2] = {{-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
-
-    for (auto d : dirS)
+    if (p.isEmpty())
     {
-        int toX = x + d[0] * 2;
-        int toY = y + d[1] * 2;
+        return false;
+    }
 
-        auto move = createMove(x, y, toX, toY, p.color);
-        if (move.has_value())
+    // Check all possible destination squares on the board
+    for (int toY = 0; toY < BOARD_SIZE; ++toY)
+    {
+        for (int toX = 0; toX < BOARD_SIZE; ++toX)
         {
-            return true;
+            if (isMoveValid(x, y, toX, toY, p.color))
+            {
+                return true;
+            }
         }
     }
     return false;

@@ -8,8 +8,6 @@ void drawPieceSprite(sf::RenderWindow &window, sf::Texture texture, float x, flo
                     ? scale = (float)TILE_SIZE / sprite.getTexture().getSize().x
                     : scale = (float)TILE_SIZE / sprite.getTexture().getSize().y;
 
-    // float scaleX = (float)TILE_SIZE / sprite.getTexture().getSize().x;
-    // float scaleY = (float)TILE_SIZE / sprite.getTexture().getSize().y;
     sprite.setScale({scale * 1.0f, scale * 1.0f});
 
     sprite.setPosition({x * TILE_SIZE + TILE_SIZE * 0.05f, y * TILE_SIZE + (TILE_SIZE - scale * sprite.getTexture().getSize().y)/2});
@@ -113,11 +111,29 @@ void Checkers::handleClick(int mouseX, int mouseY, sf::Vector2u  winSize)
         if (moveOpt.has_value()) 
         {
             bool wasJump = moveOpt->capturedPiece.has_value();
+
+            // If there are forced jumps on the board, the move MUST be a jump (capture)
+            if (board.hasForcedJumps(currentTurn) && !wasJump)
+            {
+                if (!mustContinueJump)
+                {
+                    selected = std::nullopt;
+                }
+                return;
+            }
+
             board.makeMove(*moveOpt);
 
             if(wasJump)
             {
-                currentTurn == PieceColor::Black ? counterBlack++ : counterWhite++;
+                if (currentTurn == PieceColor::Black)
+                {
+                    counterBlack++;
+                }
+                else
+                {
+                    counterWhite++;
+                }
             }
             
 
@@ -130,8 +146,8 @@ void Checkers::handleClick(int mouseX, int mouseY, sf::Vector2u  winSize)
             }
             else
             {
-                winner = board.checkWin(currentTurn);
                 endTurn();
+                winner = board.checkWin(currentTurn);
             }
         }
     }
